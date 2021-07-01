@@ -1,5 +1,10 @@
 package components.sidebar.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import models.*;
+import socket.IndexSocket;
+import utils.CommonUtil;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -46,7 +51,7 @@ public class Friends extends JFrame {
             }
         });
     }
-    public Friends() {
+    public Friends() throws JsonProcessingException {
         People p = new People();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 600);
@@ -68,15 +73,37 @@ public class Friends extends JFrame {
         rightPanel.add(centerPanel);
         centerPanel.setLayout(new BorderLayout(0, 0));
 
-        List<String> userNames = new ArrayList<String>();
-        userNames.add("Adeline");
-        userNames.add("Babins");
-        userNames.add("Bugua");
-        userNames.add("Curla");
-        userNames.add("Cyrusa");
-        userNames.add("Kalisa");
-        userNames.add("Kami");
-        userNames.add("Petersona");
+        List<User> userNames = new ArrayList<User>();
+        boolean haveMembers=true;
+        String key= "users/";
+        Request request = new Request(new ProfileRequestData(1),key);
+        ResponseDataSuccessDecoder response = new IndexSocket().execute(request);
+        if(response.isSuccess()){
+            User[] users = new UserResponseDataDecoder().returnUsersListDecoded(response.getData());
+            CommonUtil.addTabs(10, true);
+            if (users.length != 0){
+                for (User user : users) {
+                    System.out.println(user.getUserID()+". "+user.getFname()+" "+user.getLname());
+                    CommonUtil.addTabs(10, false);
+                    userNames.add(new User(user.getUserID(),user.getLname()+" "+user.getFname()));
+                }
+            }else{
+                System.out.println("No user found in this group");
+                haveMembers=false;
+            }
+        }else {
+            System.out.println("failed to fetch users in the given group");
+        }
+
+
+//        userNames.add("Adeline");
+//        userNames.add("Babins");
+//        userNames.add("Bugua");
+//        userNames.add("Curla");
+//        userNames.add("Cyrusa");
+//        userNames.add("Kalisa");
+//        userNames.add("Kami");
+//        userNames.add("Petersona");
 
         topPanel = new JPanel();
         topPanel.setForeground(new Color(128, 128, 128));
@@ -172,7 +199,6 @@ public class Friends extends JFrame {
             }
         });
 
-
         friendsLabel = new JLabel("Friends");
         friendsLabel.setFont(new Font("Tahoma", Font.BOLD, 15));
         topPanel.add(friendsLabel, BorderLayout.WEST);
@@ -180,6 +206,7 @@ public class Friends extends JFrame {
 
 //        userNames.add("Ruby");
 //        userNames.add("Webgub");
+
 
 
 //        p.findusers(userNames, "A");

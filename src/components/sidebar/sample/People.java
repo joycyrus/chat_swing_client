@@ -1,5 +1,7 @@
 package components.sidebar.sample;
 
+import models.User;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -24,7 +26,7 @@ public class People implements Scrollable{
     public People() {}
 
 
-    final JPanel GenerateUserPanel(String name, String image) {
+    final JPanel GenerateUserPanel(User name, String image) {
         JPanel userpanel = new JPanel();
         userpanel.setBounds(x_axis, y_axis, width, height);
         y_axis = y_axis+(height+2);
@@ -53,7 +55,7 @@ public class People implements Scrollable{
         userpanel.add(panel_4);
         panel_4.setLayout(new BorderLayout(0, 0));
 
-        JLabel lblNewLabel_1 = new JLabel(name);
+        JLabel lblNewLabel_1 = new JLabel(name.getFname());
         panel_4.add(lblNewLabel_1);
 
         return userpanel;
@@ -70,7 +72,7 @@ public class People implements Scrollable{
         return btnNewButton;
     }
     @SuppressWarnings("unused")
-    public JPanel findusers(List<String> users,String user) {
+    public JPanel findusers(List<User> users,String user) {
         JPanel foundusers = new JPanel();
         foundusers.setBackground(new Color(240, 248, 255));
         foundusers.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -78,8 +80,8 @@ public class People implements Scrollable{
 
         int i;
         for(i = 0; i<users.size();i++) {
-            if(users.get(i).toLowerCase().contains(user.toLowerCase()) ) {
-                System.out.println("we found : "+users.get(i)+" "+i);
+            if(users.get(i).getFname().toLowerCase().contains(user.toLowerCase()) ) {
+                System.out.println("we found : "+users.get(i).getFname()+" "+i);
                 foundusers.add(GenerateUserPanel(users.get(i), "C:\\\\Users\\\\DELL\\\\Desktop\\\\chat_swing_client\\\\src\\\\components\\\\sidebar\\\\imgs\\\\webgub.png"));
             }
 
@@ -97,7 +99,7 @@ public class People implements Scrollable{
     public void resetY_axis() {
         this.y_axis = 11;
     }
-    public final JPanel allUsers(List<String> users, JButton button) {
+    public final JPanel allUsers(List<User> users, JButton button) {
         JPanel allusers = new JPanel();
         allusers.setBackground(new Color(240, 248, 255));
         allusers.setBorder(new EmptyBorder(5, 5, 5, 5));

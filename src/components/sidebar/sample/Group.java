@@ -1,6 +1,10 @@
 package components.sidebar.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import components.add_group_member.AddGroupMembers;
+import models.*;
+import socket.IndexSocket;
+import utils.CommonUtil;
 
 import java.awt.BorderLayout;
 
@@ -48,7 +52,7 @@ public class Group extends JFrame {
     /**
      * Create the frame.
      */
-    public Group() {
+    public Group() throws JsonProcessingException {
         JScrollPane pane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         this.setContentPane(pane);
@@ -90,14 +94,36 @@ public class Group extends JFrame {
         universal.setBackground(new Color(240, 248, 255));
         universal.setBorder(new EmptyBorder(5, 5, 5, 5));
         JScrollPane scrollPane =new JScrollPane(universal);
-
-        List<String> userNames = new ArrayList<String>();
-        userNames.add("Adeline");
-        userNames.add("Babins");
-        userNames.add("Bugu");
-        userNames.add("Curl");
-        userNames.add("Cyrus");
-        userNames.add("Kalisa");
+        List<User> userNames = new ArrayList<User>();
+        boolean haveMembers=true;
+//        String key= "users/";
+//        Request request = new Request(new ProfileRequestData(1),key);
+        String key= "groups/members";
+        Request request = new Request(new ProfileRequestData(1),key);
+        ResponseDataSuccessDecoder response = new IndexSocket().execute(request);
+        if(response.isSuccess()){
+            User[] users = new UserResponseDataDecoder().returnUsersListDecoded(response.getData());
+            CommonUtil.addTabs(10, true);
+            if (users.length != 0){
+                for (User user : users) {
+                    System.out.println(user.getUserID()+". "+user.getFname()+" "+user.getLname());
+                    CommonUtil.addTabs(10, false);
+                    userNames.add(new User(user.getUserID(),user.getLname()+" "+user.getFname()));
+                }
+            }else{
+                System.out.println("No user found in this group");
+                haveMembers=false;
+            }
+        }else {
+            System.out.println("failed to fetch users in the given group");
+        }
+//        List<String> userNames = new ArrayList<String>();
+//        userNames.add("Adeline");
+//        userNames.add("Babins");
+//        userNames.add("Bugu");
+//        userNames.add("Curl");
+//        userNames.add("Cyrus");
+//        userNames.add("Kalisa");
 //        userNames.add("Kami");
 //        userNames.add("Peterson");
 //        userNames.add("Ruby");
